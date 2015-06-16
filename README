@@ -1,0 +1,68 @@
+openVPNServer Management - README File 
+---------------------------------------
+
+NOTE: Please check your openVPN server version because there are some commands that aren't implemented in the older versions.
+
+Versions:
+				0.0.1 Creation of project. Basic set of commands implemented.
+
+
+Commands List and Examples of usage
+-----------------------------------
+
+new 
+		Create a new openvpn telnet session. Need host and port of server and optionally password for login.
+
+		o = Net::OpenVPN::Manage.new("Host" => "myHost", "Port" => 1234, "Timeout" => 10, "Password" => "myPassword")
+
+close 
+		Destroy an openvpn telnet session.
+
+		o.close
+		
+status 
+		Get information about clients connected list and routing table. Return two arrays of arrays with lists inside.
+		For each client in client_list array there is: Common Name, Addredding Infos, Bytes in/out, Uptime. 
+		Insteed for each route entry there is: IP/Eth Address (depend on tun/tap mode), Addressing, Uptime.
+
+		client_list, routing_list = o.status
+		p client_list
+ 			[["Foo", "1.2.3.4:5678", "4.3.2.1", "67264", "87264", "Fri Jul  7 14:20:51 2006", "1152300051"], 
+  		["Foo2", "2.3.4.5:6789", "5.4.3.2", "12347101", "19043721", "Tue Jul  3 12:10:05 2006", "1150000050"] 
+  		... ]
+		p routing_list
+ 			[["4.3.2.1", "John Doe" ,"1.2.3.4:5678", "Fri Jul  7 14:41:35 2006", "1152301295"],
+  		["5.4.3.2", "Jane Doe" ,"2.3.4.5:6789", "Tue Jul  3 12:10:05 2006", "1150000050"]
+  ... ]
+
+load_stats 
+		Get information about number of clients connected and traffic statistic (byte in & byte out). Return an array of three element, the first is the number of client, second the number of byte in input and third the number of byte in output.
+
+		stats_info = o.load_stats
+		
+kill 
+		Kill the client instance(s) by common name of host:port combination.
+
+		o.kill("CommonName" => "myCN") OR o.kill("Host" => "myHost", "Port" => 1234)
+		
+signal 
+		Send signal s to daemon, where s can be SIGHUP, SIGTERM, SIGUSR1, SIGUSR2.
+
+		o.signal("SIGHUP")
+		
+version 
+		Returns a string showing the processes and management interface's version.
+
+pid 
+		Show process ID of the current OpenVPN process.
+
+mute 
+		Set log mute level to n, or show level if n is absent.
+
+		o.mute(n)
+		
+verb 
+		Set log verbosity level to n, or show if n is absent.
+
+		o.verb(n)
+	
